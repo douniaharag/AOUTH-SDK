@@ -4,10 +4,10 @@ session_start();
 
 require "Providers/OauthServerProvider.php";
 require "Providers/FacebookProvider.php";
-//require "Providers/GithubProvider.php";
 
-define("GIT_CLIENT_ID", '2368e541da87c8b362f5');
-define("GIT_CLIENT_SECRET", '1004f016ca09094a02d50c3cbd7c116fc930cd43');
+
+//define("GIT_CLIENT_ID", '2368e541da87c8b362f5');
+//define("GIT_CLIENT_SECRET", '1004f016ca09094a02d50c3cbd7c116fc930cd43');
 
 
 // Create a login page with a link to oauth
