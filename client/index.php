@@ -3,11 +3,9 @@
 require "Providers/OauthServerProvider.php";
 require "Providers/FacebookProvider.php";
 require "Providers/GithubProvider.php";
-require "Providers/DiscordProvider.php";
 require "Providers/GoogleProvider.php";
+require "Providers/DiscordProvider.php";
 
-
-// Create a login page with a link to oauth
 function login()
 {
     $queryParams = http_build_query([
@@ -41,43 +39,28 @@ function login()
         "redirect_uri"=>"https://localhost/gh_oauth_success",
     ]);
 
-    $dsqueryParams= http_build_query([
-        'client_id' => DiscordProvider::$clientId,
-        'redirect_uri' => 'http://localhost/ds_oauth_success',
-        'response_type' => 'code',
-        'scope' => 'identify',
-        "state" => bin2hex(random_bytes(16))
+    $ggQueryParams = http_build_query([
+        "state"=>bin2hex(random_bytes(16)),
+        "client_id"=> GoogleProvider::$clientId,
+        "scope"=>"profile",
+        "redirect_uri"=>"https://localhost/gg_oauth_success",
+        "response_type"=>"code",
     ]);
-
-    $ggqueryParams= http_build_query(array(
-        "client_id" => "853608540318-74deolutn1v16818mppgq50iqlfkn81l.apps.googleusercontent.com",
-        "redirect_uri" => "http://localhost/gg_oauth_success",
-        "response_type" => "code",
-        "scope" => "email",
-        "state" => bin2hex(random_bytes(16))
-    ));
-    echo "<a class=\"auth\" href=\"https://accounts.google.com/o/oauth2/v2/auth?{$queryParams}\">Se connecter via Google</a></div>";
-  
 
     echo "<a class='btn btn-sm btn-primary mb-2' href=\"http://localhost:8080/auth?{$queryParams}\">Login with Oauth-Server</a><br>";
     echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://www.facebook.com/v13.0/dialog/oauth?{$fbQueryParams}\">Login with Facebook</a><br>";
     echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://github.com/login/oauth/authorize?{$ghQueryParams}\">Login with Github</a><br>";
-    echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://discordapp.com/api/oauth2/authorize?{$queryParams}\">Login with Discord</a><br>";
-   
+    echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://accounts.google.com/o/oauth2/auth?{$ggQueryParams}\">Login with Google</a><br>";
 
     echo "</div>";
-
-
-
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>OAuth2 - SDK</title>
+        <title>Projet - SDK</title>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
@@ -99,9 +82,6 @@ function login()
             case '/gh_oauth_success':
                 GithubProvider::callback();
                 break;
-            case '/ds_oauth_success':
-                DiscordProvider::callback();
-                break;
             case '/gg_oauth_success':
                 GoogleProvider::callback();
                 break;
@@ -111,5 +91,8 @@ function login()
         ?>
     </body>
 </html>
+
+
+
 
 
