@@ -56,7 +56,7 @@ class GoogleProvider
             ]
         ]);
 
-        $response = file_get_contents("https://people.googleapis.com/v1/people/me?personFields=names,emailAddresses", false, $context);
+        $response = file_get_contents("https://www.googleapis.com/oauth2/v3/userinfo", false, $context);
 
         if (!$response) {
             echo $http_response_header;
