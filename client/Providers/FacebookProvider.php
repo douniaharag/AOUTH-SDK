@@ -1,12 +1,9 @@
 <?php
 
-define("CLIENT_ID", '1192512421540318');
-define("CLIENT_SECRET", '195f8b4200e78bb7f86980d0a452e3be');
-
 class FacebookProvider
 {
-    public static string $clientId = '538824011319513';
-    private static string $clientSecret = '9fad79231d0c250e2285a2e9b126e09a';
+    public static string $clientId = '1192512421540318';
+    private static string $clientSecret = '195f8b4200e78bb7f86980d0a452e3be';
 
 // Facebook oauth: exchange code with token then get user info
     public static function callback()
@@ -15,6 +12,7 @@ class FacebookProvider
         $user = FacebookProvider::getUser($token);
         $unifiedUser = (fn () => [
             "id" => $user["id"],
+            "name" => $user["name"],
             "email" => $user["email"],
             "firstName" => $user['first_name'],
             "lastName" => $user['last_name'],
@@ -60,4 +58,5 @@ class FacebookProvider
         }
         return json_decode($response, true);
     }
+}
 }
