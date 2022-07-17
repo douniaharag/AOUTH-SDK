@@ -1,13 +1,10 @@
 <?php
 
-session_start();
-
 require "Providers/OauthServerProvider.php";
 require "Providers/FacebookProvider.php";
-
-
-//define("GIT_CLIENT_ID", '2368e541da87c8b362f5');
-//define("GIT_CLIENT_SECRET", '1004f016ca09094a02d50c3cbd7c116fc930cd43');
+require "Providers/GithubProvider.php";
+require "Providers/DiscordProvider.php";
+require "Providers/GoogleProvider.php";
 
 
 // Create a login page with a link to oauth
@@ -20,49 +17,99 @@ function login()
         "response_type"=>"code",
         "redirect_uri"=>"http://localhost:8081/oauth_success",
     ]);
+
     echo "
-        <form method=\"POST\" action=\"/oauth_success\">
-            <input type=\"text\" name=\"username\"/>
-            <input type=\"password\" name=\"password\"/>
-            <input type=\"submit\" value=\"Login\"/>
-        </form>
+        <div class='m-5'>
+            <form method=\"POST\" action=\"/oauth_success\">
+                <input class='form-control mb-2' type=\"text\" name=\"username\" placeholder='Username'/>
+                <input class='form-control mb-2' type=\"password\" name=\"password\" placeholder='Password'/>
+                <input class='btn btn-sm btn-success mb-2' type=\"submit\" value=\"Login\"/>
+            </form>
     ";
+
     $fbQueryParams = http_build_query([
         "state"=>bin2hex(random_bytes(16)),
         "client_id"=> FacebookProvider::$clientId,
         "scope"=>"public_profile,email",
         "redirect_uri"=>"https://localhost/fb_oauth_success",
     ]);
-    $gitQueryParams = http_build_query([
+
+    $ghQueryParams = http_build_query([
         "state"=>bin2hex(random_bytes(16)),
         "client_id"=> GithubProvider::$clientId,
         "scope"=>"user",
-        "redirect_uri"=>"https://localhost/git_oauth_success",
+        "redirect_uri"=>"https://localhost/gh_oauth_success",
     ]);
-    
+
+    $dsqueryParams= http_build_query([
+        'client_id' => DiscordProvider::$clientId,
+        'redirect_uri' => 'http://localhost/ds_oauth_success',
+        'response_type' => 'code',
+        'scope' => 'identify',
+        "state" => bin2hex(random_bytes(16))
+    ]);
+
+    $ggqueryParams= http_build_query(array(
+        "client_id" => "853608540318-74deolutn1v16818mppgq50iqlfkn81l.apps.googleusercontent.com",
+        "redirect_uri" => "http://localhost/gg_oauth_success",
+        "response_type" => "code",
+        "scope" => "email",
+        "state" => bin2hex(random_bytes(16))
+    ));
+    echo "<a class=\"auth\" href=\"https://accounts.google.com/o/oauth2/v2/auth?{$queryParams}\">Se connecter via Google</a></div>";
+  
+
+    echo "<a class='btn btn-sm btn-primary mb-2' href=\"http://localhost:8080/auth?{$queryParams}\">Login with Oauth-Server</a><br>";
+    echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://www.facebook.com/v13.0/dialog/oauth?{$fbQueryParams}\">Login with Facebook</a><br>";
+    echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://github.com/login/oauth/authorize?{$ghQueryParams}\">Login with Github</a><br>";
+    echo "<a class='btn btn-sm btn-primary mb-2' href=\"https://discordapp.com/api/oauth2/authorize?{$queryParams}\">Login with Discord</a><br>";
+   
+
+    echo "</div>";
 
 
-    echo "<a href=\"http://localhost:8080/auth?{$queryParams}\">Login with Oauth-Server</a><br>";
-    echo "<a href=\"https://www.facebook.com/v13.0/dialog/oauth?{$fbQueryParams}\">Login with Facebook</a><br>";
-    echo "<a href=\"https://github.com/login/oauth/authorize?{$gitQueryParams}\">Login with Github</a><br>";
+
 }
 
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>OAuth2 - SDK</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <?php
+        $route = $_SERVER["REQUEST_URI"];
+        switch (strtok($route, "?")) {
+            case '/login':
+                login();
+                break;
+            case '/oauth_success':
+                OauthServerProvider::callback();
+                break;
+            case '/fb_oauth_success':
+                FacebookProvider::callback();
+                break;
+            case '/gh_oauth_success':
+                GithubProvider::callback();
+                break;
+            case '/ds_oauth_success':
+                DiscordProvider::callback();
+                break;
+            case '/gg_oauth_success':
+                GoogleProvider::callback();
+                break;
+            default:
+                http_response_code(404);
+        }
+        ?>
+    </body>
+</html>
 
 
-$route = $_SERVER["REQUEST_URI"];
-switch (strtok($route, "?")) {
-    case '/login':
-        login();
-        break;
-    case '/oauth_success':
-        OauthServerProvider::callback();
-        break;
-    case '/fb_oauth_success':
-        FacebookProvider::callback();
-        break;
-    case '/git-auth-success':
-        GithubProvider::callback();
-        break;
-    default:
-        http_response_code(404);
-}
