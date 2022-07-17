@@ -6,8 +6,9 @@ This is a project for the course `Intégration SDK`. The goal is to create an OA
 
 - Facebook (https://developers.facebook.com/docs/facebook-login/web/)
 - GitHub (https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps)
+- - Google (https://developers.google.com/identity/sign-in/web/sign-in)
 - Discord (https://discord.com/developers/docs/topics/oauth2)
-- Google (https://developers.google.com/identity/sign-in/web/sign-in)
+
 - Our own SDK server
 
 ## Run the project
